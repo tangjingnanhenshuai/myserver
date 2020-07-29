@@ -1,8 +1,9 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
+const router = require("./router")
 
-var router = require('./router.js');
+// var router = require('./router.js');
 function get_client_ipv4(req) {
   //获取任意浏览器的IP地址，
   var ip = req.headers['x-forwarded-for'] ||
@@ -24,16 +25,12 @@ function showLog(ipv4,message){
       " " + ipv4 + " " + message);
 }
 
-http.createServer(function(request,response){
+http.createServer(   function(request,response){
    var pathname= url.parse(request.url).pathname;
-  console.log("aaaaaaaaaaaaaaaaaaaaaaaaaa",pathname)
-
    if(pathname=="/"){
      pathname="/index.html";
    }
-   var ipv4=get_client_ipv4(request)
   //  showLog(ipv4,("请求"+decodeURI(pathname)));
-   console.log("decodeURI",decodeURI(pathname))
    fs.exists(__dirname + decodeURI(pathname),function(exists){
     if(exists){
         //使用router模块的函数
@@ -43,7 +40,17 @@ http.createServer(function(request,response){
         //文件不存在，向客户端发送404状态码，并发送该文件不存在的字符串
         response.writeHead(404,{"Content-Type":"text/plain"});
         response.end(pathname+"文件不存在！");
+        // router.get(pathname, async (request, response) => {
+        //   const que = request.query
+        //   console.log(que,49)
+        //   const res = await rp(`http://localhost:3000/add?no=${que.no}`)
+        //   await ctx.render('index', {
+        //         PATHNAME: ctx.path,
+        //         list:res
+        //   })
+        // })
     }
-});
+})
   //  console.log(ipv4)
-}).listen(3000)
+}).listen(3001)
+console.log("启动成功 端口为3001")
